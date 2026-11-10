@@ -9,12 +9,12 @@ import orderRouter from "./routes/orderRoute.js"
 
 
 const app = express()
-const port = 4000
+const port = process.env.PORT || 4000
 
 app.use(express.json())
 app.use(cors())
 
-connectDB();
+// connectDB();
 
 //api endpoint  
 app.use("/api/food",foodRouter)
@@ -27,9 +27,20 @@ app.get("/",(req,res)=>{
     res.send("API Working")
 })
 
-app.listen(port,()=>{
-    console.log(`Server Started on http://localhost:${port}`)
-})
+const startServer = async () => {
+    try {
+        await connectDB();
+
+        app.listen(port, "0.0.0.0", () => {
+            console.log(`Server Started on port ${port}`);
+        });
+    } catch (error) {
+        console.error("Failed to start server:", error);
+        process.exit(1);
+    }
+};
+
+startServer();
 
 
 //mongodb+srv://rafiksh4_db_user:<db_password>@cluster0.fpzwoaf.mongodb.net/
